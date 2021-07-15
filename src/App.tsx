@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ItemList from './components/ItemList';
 import NewItem from './components/NewItem';
 import Item from './models/item';
 
@@ -14,6 +15,7 @@ function App() {
   return (
     <div>
       <NewItem onAddItem={addItemHandler} />
+      <ItemList items={items} />
     </div>
   );
 }
