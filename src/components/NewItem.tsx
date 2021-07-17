@@ -1,18 +1,20 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Item from '../models/item';
-
 import UserInput from '../hooks/user-input';
 
 import classes from './NewItem.module.css';
 
 const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
-  const [enteredTitle, setEnteredTitle] = useState('');
-  const [isTouched, setIsTouched] = useState(false);
+  const isNotEmpty = (value: string) => value.trim() !== '';
 
-  const validate = (value: string) => value.trim() !== '';
-
-  const valueIsValid = validate(enteredTitle);
-  const hasError = !valueIsValid && isTouched;
+  const {
+    enteredValue: enteredTitle,
+    valueIsValid: enteredTitleIsValid,
+    hasError: enteredTitleHasError,
+    valueInputChangeHandler: titleInputChangeHandler,
+    valueInputBlurHandler: titleInputBlurHandler,
+    reset: titleInputReset,
+  } = UserInput(isNotEmpty);
 
   // setup for useRef to avoid compile error
   // 1. set generics
@@ -20,32 +22,16 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
   const categorySelectRef = useRef<HTMLSelectElement>(null);
 
   let formIsValid = false;
-  if (valueIsValid) {
+  if (enteredTitleIsValid) {
     formIsValid = true;
   }
 
-  const titleInputChangeHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setEnteredTitle(event.target.value);
-  };
-
-  const titleInputBlurHandler = () => {
-    setIsTouched(true);
-  };
-
-  const reset = () => {
-    setEnteredTitle('');
-    setIsTouched(false);
-  };
-
-  const titleInputClasses = hasError ? `${classes.invalid}` : '';
+  const titleInputClasses = enteredTitleHasError ? `${classes.invalid}` : '';
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     // mark ! for guarantee no null
     // this submit function run after rendering, ref is linked, so no null value
-
     const enteredCategory = categorySelectRef.current!.value;
 
     if (!enteredTitle || !enteredCategory) {
@@ -59,7 +45,7 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
       category: enteredCategory,
     });
 
-    reset();
+    titleInputReset();
   };
 
   return (
@@ -73,7 +59,7 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
         onBlur={titleInputBlurHandler}
         className={titleInputClasses}
       />
-      {hasError && <p className='error-text'>title is invalid.</p>}
+      {enteredTitleHasError && <p className='error-text'>title is invalid.</p>}
       {/* FIXME: get category dynamic */}
       <label htmlFor='category'>Category</label>
       <select id='category' ref={categorySelectRef}>
