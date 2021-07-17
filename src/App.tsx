@@ -3,6 +3,8 @@ import ItemList from './components/ItemList';
 import NewItem from './components/NewItem';
 import Item from './models/item';
 
+import './App.css';
+
 function App() {
   const [items, setItems] = useState<Item[]>([]);
 

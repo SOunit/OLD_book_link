@@ -25,6 +25,11 @@ form select {
   margin-bottom: 0.5rem;
 }
 
+.form input.invalid,
+form select.invalid {
+  background-color: rgb(255, 200, 210);
+}
+
 .form button {
   font: inherit;
   background-color: #ebb002;
@@ -35,8 +40,20 @@ form select {
   cursor: pointer;
 }
 
+.form button:disabled {
+  background-color: rgb(197, 197, 197);
+  border-color: rgb(197, 197, 197);
+  cursor: not-allowed;
+}
+
 .form button:hover,
 .form button:active {
   background-color: #ebc002;
   border-color: #ebc002;
+}
+
+.form button:hover:disabled,
+.form button:active:disabled {
+  background-color: rgb(197, 197, 197);
+  border-color: rgb(197, 197, 197);
 }

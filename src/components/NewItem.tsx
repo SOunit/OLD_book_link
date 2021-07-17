@@ -1,21 +1,46 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Item from '../models/item';
+
+import UserInput from '../hooks/user-input';
 
 import classes from './NewItem.module.css';
 
 const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
+  const [enteredTitle, setEnteredTitle] = useState('');
+  const [isTouched, setIsTouched] = useState(false);
+
+  const validate = (value: string) => value.trim() !== '';
+
+  const valueIsValid = validate(enteredTitle);
+  const hasError = !valueIsValid && isTouched;
+
   // setup for useRef to avoid compile error
   // 1. set generics
   // 2. set null as initial value
-  const titleInputRef = useRef<HTMLInputElement>(null);
   const categorySelectRef = useRef<HTMLSelectElement>(null);
+
+  let formIsValid = false;
+  if (valueIsValid) {
+    formIsValid = true;
+  }
+
+  const titleInputChangeHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setEnteredTitle(event.target.value);
+  };
+
+  const titleInputBlurHandler = () => {
+    setIsTouched(true);
+  };
+
+  const titleInputClasses = hasError ? `${classes.invalid}` : '';
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     // mark ! for guarantee no null
     // this submit function run after rendering, ref is linked, so no null value
 
-    const enteredTitle = titleInputRef.current!.value;
     const enteredCategory = categorySelectRef.current!.value;
 
     if (!enteredTitle || !enteredCategory) {
@@ -33,7 +58,15 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
   return (
     <form className={classes.form} onSubmit={submitHandler}>
       <label htmlFor='title'>Title</label>
-      <input type='text' id='title' ref={titleInputRef} />
+      <input
+        type='text'
+        id='title'
+        value={enteredTitle}
+        onChange={titleInputChangeHandler}
+        onBlur={titleInputBlurHandler}
+        className={titleInputClasses}
+      />
+      {hasError && <p className='error-text'>title is invalid.</p>}
       {/* FIXME: get category dynamic */}
       <label htmlFor='category'>Category</label>
       <select id='category' ref={categorySelectRef}>
@@ -41,7 +74,7 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
         <option>Comic</option>
         <option>Movie</option>
       </select>
-      <button>Add New Item</button>
+      <button disabled={!formIsValid}>Add New Item</button>
     </form>
   );
 };
