@@ -23,7 +23,11 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
       return;
     }
 
-    props.onAddItem({ title: enteredTitle, category: enteredCategory });
+    props.onAddItem({
+      id: Math.random().toString(),
+      title: enteredTitle,
+      category: enteredCategory,
+    });
   };
 
   return (
