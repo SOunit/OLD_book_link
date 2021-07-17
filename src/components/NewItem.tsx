@@ -34,6 +34,11 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
     setIsTouched(true);
   };
 
+  const reset = () => {
+    setEnteredTitle('');
+    setIsTouched(false);
+  };
+
   const titleInputClasses = hasError ? `${classes.invalid}` : '';
 
   const submitHandler = (event: React.FormEvent) => {
@@ -53,6 +58,8 @@ const NewItem: React.FC<{ onAddItem: (item: Item) => void }> = (props) => {
       title: enteredTitle,
       category: enteredCategory,
     });
+
+    reset();
   };
 
   return (
